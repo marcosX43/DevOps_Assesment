@@ -47,6 +47,18 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 
     resources = ["*"]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "codestar-connections:GetConnection",
+      "codestar-connections:UseConnection",
+      "codestar-connections:ListConnections"
+    ]
+
+    resources = ["*"]
+  }
 }
 # Binding the policy document to our role.
 resource "aws_iam_role_policy" "codepipeline_policy" {

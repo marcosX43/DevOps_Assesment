@@ -21,7 +21,7 @@ resource "aws_codepipeline" "codepipeline" {
       # the output of the source(which is the source code) gets added in a directory called source_output in our s3 bucket
       configuration = {
         ConnectionArn    = var.connection_arn
-        FullRepositoryId = "DevOps_Assesment"
+        FullRepositoryId = "marcosX43/DevOps_Assesment"
         BranchName       = "main"
       }
     }
