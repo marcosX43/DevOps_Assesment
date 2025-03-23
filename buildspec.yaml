@@ -10,7 +10,7 @@ phases:
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - TAG="$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
       - echo $TAG
-      - if [ -z "$TAG" ]; then echo "ERROR: TAG is empty!" && exit 1; fi
+      # - if [ -z "$TAG" ]; then echo "ERROR: TAG is empty!" && exit 1; fi
   build:
     commands:
       - echo Build started on `date`
@@ -25,9 +25,9 @@ phases:
       - REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:$TAG
-      - echo "Updating values.yaml with new image tag..."
-      - sed -i "s|tag:.*|tag: \"$TAG\"|" temp-api-chart/values.yaml
-      - cat temp-api-chart/values.yaml
+      # - echo "Updating values.yaml with new image tag..."
+      # - sed -i "s|tag:.*|tag: \"$TAG\"|" temp-api-chart/values.yaml
+      # - cat temp-api-chart/values.yaml
       - echo Writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$REPO_URI:$IMAGE_TAG" | tee imagedefinitions.json
 artifacts:
