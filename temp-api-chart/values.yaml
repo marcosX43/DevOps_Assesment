@@ -10,4 +10,18 @@ service:
 
 ingress:
   enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/group.name: "fastapi-alb-group"
+    alb.ingress.kubernetes.io/healthcheck-path: "/health"
+    alb.ingress.kubernetes.io/load-balancer-name: "fastapi-alb"
+  ingressClassName: alb
+  host: test.appwave.xyz
+  paths:
+    - path: /
+      pathType: Prefix
+      serviceName: temp-api-chart-fastapi
+      servicePort: 8000
   

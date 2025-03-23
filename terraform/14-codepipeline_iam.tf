@@ -122,6 +122,7 @@ resource "aws_iam_role_policy_attachment" "codepipeline_logs_attachment" {
 
 
 resource "kubernetes_config_map_v1_data" "aws_auth" {
+  depends_on = [aws_eks_cluster.assessment]
   metadata {
     name      = "aws-auth"
     namespace = "kube-system"
@@ -135,6 +136,11 @@ resource "kubernetes_config_map_v1_data" "aws_auth" {
       username: build-role
       groups:
         - system:masters
+    - rolearn: ${aws_iam_role.nodes.arn}
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
     YAML
   }
 }

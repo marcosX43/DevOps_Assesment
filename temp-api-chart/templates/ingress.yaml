@@ -3,22 +3,19 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
   annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-    alb.ingress.kubernetes.io/group.name: "fastapi-alb-group"
-    alb.ingress.kubernetes.io/healthcheck-path: "/health"
-    alb.ingress.kubernetes.io/load-balancer-name: "fastapi-alb"
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
-  ingressClassName: alb
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   rules:
-    - host: test.appwave.xyz
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          {{- range .Values.ingress.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ .Release.Name }}-fastapi
+                name: {{ .serviceName }}
                 port:
-                  number: 80
+                  number: {{ .servicePort }}
+          {{- end }}
