@@ -28,7 +28,7 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "Build"
+    name = "Build And Deploy"
     # Build stage takes in input from source_output dir (source code) & we provide it only with the codebuild id we created from the first step.
     action {
       name             = "Build"
@@ -41,29 +41,6 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         ProjectName = aws_codebuild_project.temp-api-codebuild.name
-      }
-    }
-  }
-  stage {
-    name = "Deploy"
-
-    action {
-      name            = "Deploy_Helm_to_EKS"
-      category        = "Deploy"
-      owner           = "AWS"
-      provider        = "EKS"
-      input_artifacts = ["helm_chart"]
-      version         = "1"
-
-      configuration = {
-        ClusterName = "assessment"
-        Namespace   = "default"
-        ActionMode  = "APPLY"
-        RoleArn     = aws_iam_role.codepipeline_role.arn
-        Manifests   = "temp-api-chart/*"
-        ReleaseName = "temp-api-chart"
-        Chart       = "temp-api-chart"
-        Values      = "temp-api-chart/values.yaml"
       }
     }
   }

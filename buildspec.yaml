@@ -15,15 +15,11 @@ phases:
       - echo $TAG
   build:
     commands:
-      - cd temp-api/
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker pull $REPOSITORY_URI:$IMAGE_TAG || true
-      - docker build --cache-from $REPOSITORY_URI:$IMAGE_TAG --tag $REPOSITORY_URI:$TAG .
+      - docker build --cache-from $REPOSITORY_URI:$IMAGE_TAG --tag $REPOSITORY_URI:$TAG temp-api/
       - docker tag $REPOSITORY_URI:$TAG $REPOSITORY_URI:$IMAGE_TAG
-      - echo Packaging Helm chart...
-      - helm package ../temp-api-chart/ -d helm_output/
-      - ls -lh helm_output/
   post_build:
     commands:
       - echo Build completed on `date`
@@ -33,11 +29,10 @@ phases:
       - docker push $REPOSITORY_URI:$TAG
       - echo Writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$REPO_URI:$IMAGE_TAG" | tee imagedefinitions.json
-      # - echo Deploying Helm chart to EKS...
-      # - aws eks update-kubeconfig --region us-east-1 --name assessment
-      # - helm upgrade --install my-app temp-api-chart/ -n $NAMESPACE --values temp-api-chart/values.yaml
+      - echo Deploying Helm chart to EKS...
+      - aws eks update-kubeconfig --region us-east-1 --name assessment
+      - helm upgrade --install temp-api-chart temp-api-chart/ -n $NAMESPACE --values temp-api-chart/values.yaml
 artifacts:
   files: 
     - imagedefinitions.json
-    - helm_output/*.tgz
   
