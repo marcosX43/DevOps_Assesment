@@ -6,6 +6,8 @@ metadata:
     app: fastapi
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: fastapi
