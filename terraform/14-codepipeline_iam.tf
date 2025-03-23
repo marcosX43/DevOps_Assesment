@@ -72,3 +72,69 @@ resource "aws_iam_policy_attachment" "eks_access" {
   roles      = [aws_iam_role.codepipeline_role.name]
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
+
+
+resource "aws_iam_policy" "codepipeline_eks_access" {
+  name        = "CodePipelineEKSAccess"
+  description = "Allow CodePipeline to describe EKS clusters"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "eks:DescribeCluster"
+        Resource = "arn:aws:eks:us-east-1:418272781513:cluster/assessment"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "codepipeline_eks_attach" {
+  role       = aws_iam_role.codepipeline_role.id
+  policy_arn = aws_iam_policy.codepipeline_eks_access.arn
+}
+
+data "aws_iam_policy_document" "codepipelinelogs_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+}
+
+resource "aws_iam_policy" "codepipeline_logs_policy" {
+  name        = "CodePipelineCloudWatchLogsPolicy"
+  description = "Allows CodePipeline to write logs to CloudWatch"
+  policy      = data.aws_iam_policy_document.codepipelinelogs_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "codepipeline_logs_attachment" {
+  role       = aws_iam_role.codepipeline_role.name
+  policy_arn = aws_iam_policy.codepipeline_logs_policy.arn
+}
+
+
+resource "kubernetes_config_map_v1_data" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  force = true
+
+  data = {
+    mapRoles = <<YAML
+    - rolearn: ${aws_iam_role.codepipeline_role.arn}
+      username: build-role
+      groups:
+        - system:masters
+    YAML
+  }
+}

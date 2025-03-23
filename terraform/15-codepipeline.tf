@@ -64,7 +64,7 @@ resource "aws_codepipeline" "codepipeline" {
         ClusterName       = "assessment"
         HelmChartLocation = "temp-api-chart"
         HelmReleaseName   = "temp-api-chart"
-        HelmValuesFiles   = "temp-api-chart/values.yaml"
+        HelmValuesFiles   = "values.yaml"
       }
     }
   }
