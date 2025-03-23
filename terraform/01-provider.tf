@@ -11,13 +11,16 @@ terraform {
   }
 }
 data "aws_eks_cluster" "cluster" {
-  name = "assessment"
+  depends_on = [aws_eks_cluster.assessment]
+  name       = "assessment"
 }
 data "aws_eks_cluster_auth" "cluster" {
-  name = "assessment"
+  depends_on = [aws_eks_cluster.assessment]
+  name       = "assessment"
 }
 data "aws_iam_openid_connect_provider" "oidc_provider" {
-  url = data.aws_eks_cluster.cluster.identity.0.oidc.0.issuer
+  depends_on = [aws_iam_openid_connect_provider.eks]
+  url        = data.aws_eks_cluster.cluster.identity.0.oidc.0.issuer
 }
 provider "helm" {
   kubernetes {

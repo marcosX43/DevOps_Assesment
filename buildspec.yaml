@@ -16,7 +16,7 @@ phases:
       - echo $TAG
   build:
     commands:
-      - cd tmp-api/
+      - cd temp-api/
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker pull $REPOSITORY_URI:$IMAGE_TAG || true
