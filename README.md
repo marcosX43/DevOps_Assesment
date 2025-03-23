@@ -1,9 +1,9 @@
 # DevOps Technical Assessment: EKS, Terraform, Docker, and CI/CD Pipeline
 
 ## Objective
-The goal of this assessment is to create an AWS EKS cluster using Terraform, deploy a Docker-based web application, and set up a CI/CD pipeline to automate the deployment using Helm.
+The purpose of this assessment is to provision an AWS EKS cluster using Terraform, deploy a Docker-based web application, and configure a CI/CD pipeline to automate the deployment process using Helm.
 
-## Folder Structure
+## Project Structure
 ```
 DEVOPS_ASSESSMENT/
 │-- temp-api/              # Web application source code
@@ -14,10 +14,9 @@ DEVOPS_ASSESSMENT/
 │-- README.md              # Documentation
 ```
 
-
 ## Setup Instructions
 ### Prerequisites
-Ensure you have the following installed:
+Ensure the following tools are installed before proceeding:
 - AWS CLI
 - Terraform
 - kubectl
@@ -26,21 +25,22 @@ Ensure you have the following installed:
 - Git
 
 ### Step 1: Provision the EKS Cluster and CI/CD Pipeline
+Run the following commands to initialize and apply the Terraform scripts:
 ```sh
 cd terraform
 terraform init
 terraform apply
 ```
 
-### Deploy the Application
-- Once the terraform script provision the resources successfully, it will automatically deploy the application
-- For the manual deployment, Please use the following command
+### Step 2: Deploy the Application
+- Upon successful provisioning of resources via Terraform, the application will be deployed automatically.
+- To deploy the application manually, execute the following command:
 ```sh
 cd temp-api-chart
 helm install temp-api ./ --namespace default
 ```
 
-### Step 3: CI/CD Pipeline
-- For Configuring the CI/CD Pipeline I have used AWS CodePipeline. Whenever the code pushed to `main` branch, It will deploy the latest changes,
-
+### Step 3: CI/CD Pipeline Configuration
+- AWS CodePipeline is used for automating deployments.
+- Whenever code is pushed to the `main` branch, the latest changes will be deployed automatically.
 
