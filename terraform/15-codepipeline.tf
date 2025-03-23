@@ -58,7 +58,7 @@ resource "aws_codepipeline" "codepipeline" {
       region    = "us-east-1"
       run_order = 1
 
-      input_artifacts = ["source_output"]
+      input_artifacts = ["build_output"]
 
       configuration = {
         ClusterName       = "assessment"
