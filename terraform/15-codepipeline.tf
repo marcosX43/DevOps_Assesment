@@ -1,6 +1,7 @@
 resource "aws_codepipeline" "codepipeline" {
-  name     = "temp-api-pipeline"
-  role_arn = aws_iam_role.codepipeline_role.arn
+  name          = "temp-api-pipeline"
+  role_arn      = aws_iam_role.codepipeline_role.arn
+  pipeline_type = "V2"
   # Specifying the artifact store
   artifact_store {
     location = aws_s3_bucket.codepipeline_bucket.bucket
@@ -41,6 +42,29 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         ProjectName = aws_codebuild_project.temp-api-codebuild.name
+      }
+    }
+  }
+
+  stage {
+    name = "Deploy"
+
+    action {
+      name      = "Deploy_to_EKS"
+      category  = "Deploy"
+      owner     = "AWS"
+      provider  = "EKS"
+      version   = "1"
+      region    = "us-east-1"
+      run_order = 1
+
+      input_artifacts = ["source_output"]
+
+      configuration = {
+        ClusterName       = "assessment"
+        HelmChartLocation = "temp-api-chart"
+        HelmReleaseName   = "temp-api-chart"
+        HelmValuesFiles   = "temp-api-chart/values.yaml"
       }
     }
   }
