@@ -1,0 +1,9 @@
+replicaCount: 1
+
+image:
+  repository: "418272781513.dkr.ecr.us-east-1.amazonaws.com/prod-temp-api"
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
