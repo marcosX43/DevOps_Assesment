@@ -66,3 +66,9 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
   role   = aws_iam_role.codepipeline_role.id
   policy = data.aws_iam_policy_document.codepipeline_policy.json
 }
+
+resource "aws_iam_policy_attachment" "eks_access" {
+  name       = "CodePipelineEKSAccess"
+  roles      = [aws_iam_role.codepipeline_role.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}

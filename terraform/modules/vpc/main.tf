@@ -22,7 +22,9 @@ resource "aws_subnet" "public_subnets" {
   cidr_block        = element(var.public_subnet_cidrs, count.index)
 
   tags = {
-    Name = "Public Subnet ${count.index + 1}"
+    Name                               = "Public Subnet ${count.index + 1}"
+    "kubernetes.io/role/elb"           = "1"
+    "kubernetes.io/cluster/assessment" = "owned"
   }
 }
 

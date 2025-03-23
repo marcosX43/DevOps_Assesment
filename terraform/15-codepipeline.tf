@@ -44,4 +44,27 @@ resource "aws_codepipeline" "codepipeline" {
       }
     }
   }
+  stage {
+    name = "Deploy"
+
+    action {
+      name            = "Deploy_Helm_to_EKS"
+      category        = "Deploy"
+      owner           = "AWS"
+      provider        = "EKS"
+      input_artifacts = ["helm_chart"]
+      version         = "1"
+
+      configuration = {
+        ClusterName = "assessment"
+        Namespace   = "default"
+        ActionMode  = "APPLY"
+        RoleArn     = aws_iam_role.codepipeline_role.arn
+        Manifests   = "temp-api-chart/*"
+        ReleaseName = "temp-api-chart"
+        Chart       = "temp-api-chart"
+        Values      = "temp-api-chart/values.yaml"
+      }
+    }
+  }
 }

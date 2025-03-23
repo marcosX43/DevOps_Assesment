@@ -5,10 +5,9 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - echo Installing kubectl
-      - curl -o kubectl https://amazon-eks.s3.$AWS_DEFAULT_REGION.amazonaws.com/1.15.10/2020-02-22/bin/darwin/amd64/kubectl
-      - chmod +x ./kubectl
-      - kubectl version --short --client
+      - echo Installing Helm...
+      - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      - helm version
   pre_build:
     commands:
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
@@ -22,6 +21,9 @@ phases:
       - docker pull $REPOSITORY_URI:$IMAGE_TAG || true
       - docker build --cache-from $REPOSITORY_URI:$IMAGE_TAG --tag $REPOSITORY_URI:$TAG .
       - docker tag $REPOSITORY_URI:$TAG $REPOSITORY_URI:$IMAGE_TAG
+      - echo Packaging Helm chart...
+      - helm package ../temp-api-chart/ -d helm_output/
+      - ls -lh helm_output/
   post_build:
     commands:
       - echo Build completed on `date`
@@ -31,5 +33,11 @@ phases:
       - docker push $REPOSITORY_URI:$TAG
       - echo Writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$REPO_URI:$IMAGE_TAG" | tee imagedefinitions.json
+      - echo Deploying Helm chart to EKS...
+      - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name $EKS_CLUSTER_NAME
+      - helm upgrade --install my-app temp-api-chart/ -n $NAMESPACE --values temp-api-chart/values.yaml
 artifacts:
-  files: imagedefinitions.json
+  files: 
+    - imagedefinitions.json
+    - helm_output/*.tgz
+  

@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-fastapi
 spec:
-  type: ClusterIP
+  type: {{ .Values.service.type }}
   selector:
     app: fastapi
   ports:
     - protocol: TCP
-      port: 80
+      port: {{ .Values.service.port }}
       targetPort: 8000

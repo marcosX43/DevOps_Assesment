@@ -114,7 +114,8 @@
             "Action": [
                 "ec2:AuthorizeSecurityGroupIngress",
                 "ec2:RevokeSecurityGroupIngress",
-                "ec2:DeleteSecurityGroup"
+                "ec2:DeleteSecurityGroup",
+                "ec2:GetSecurityGroupsForVpc"
             ],
             "Resource": "*",
             "Condition": {
