@@ -21,12 +21,12 @@ phases:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAILT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      - REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:$TAG
       - echo "Updating values.yaml with new image tag..."
       - sed -i "s|tag:.*|tag: \"$TAG\"|" temp-api-chart/values.yaml
-      - cat values.yaml
+      - cat temp-api-chart/values.yaml
       - echo Writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$REPO_URI:$IMAGE_TAG" | tee imagedefinitions.json
 artifacts:
