@@ -28,7 +28,7 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "Build And Deploy"
+    name = "Build_And_Deploy"
     # Build stage takes in input from source_output dir (source code) & we provide it only with the codebuild id we created from the first step.
     action {
       name             = "Build"

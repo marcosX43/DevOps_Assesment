@@ -31,7 +31,7 @@ phases:
       - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$REPO_URI:$IMAGE_TAG" | tee imagedefinitions.json
       - echo Deploying Helm chart to EKS...
       - aws eks update-kubeconfig --region us-east-1 --name assessment
-      - helm upgrade --install temp-api-chart temp-api-chart/ -n $NAMESPACE --values temp-api-chart/values.yaml
+      - helm upgrade --install temp-api-chart temp-api-chart/ --values temp-api-chart/values.yaml
 artifacts:
   files: 
     - imagedefinitions.json

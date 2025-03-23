@@ -74,6 +74,20 @@ data "aws_iam_policy_document" "build-policy" {
 
     resources = ["*"]
   }
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "eks:DescribeCluster",
+      "eks:ListClusters",
+      "eks:DescribeNodegroup",
+      "eks:ListNodegroups",
+      "eks:AccessKubernetesApi"
+    ]
+
+    resources = ["arn:aws:eks:us-east-1:418272781513:cluster/assessment"]
+  }
+
 
   statement {
     effect    = "Allow"
